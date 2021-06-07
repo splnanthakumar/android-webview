@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private ProgressDialog progressDialog;
-    private PermissionRequest mRequest;
+    private Callback runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         mWebview.setWebChromeClient(new WebChromeClient() {
 
+
             @Override
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
                 // asegurar que no existan callbacks
@@ -105,12 +106,20 @@ public class MainActivity extends AppCompatActivity {
                     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void run() {
-                        mRequest = null;
                         if (request.getOrigin().toString().equals("https://tamilchat4u.com/")) {
                             if (checkPermission()) {
                                 request.grant(request.getResources());
                             } else {
-                                requestPermission();
+                                requestPermission(new Callback() {
+                                    @Override
+                                    public void run(boolean result) {
+                                        if(result){
+                                            request.grant(request.getResources());
+                                        }else{
+                                            request.deny();
+                                        }
+                                    }
+                                });
                             }
                         } else {
                             request.deny();
@@ -147,7 +156,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == FILECHOOSER_RESULTCODE) {
 
-            if (null == mUploadMessage || intent == null || resultCode != RESULT_OK) {
+            if ( intent == null || resultCode != RESULT_OK) {
+                if (null != mUploadMessage){
+                    mUploadMessage.onReceiveValue(null);
+                    mUploadMessage = null;
+                }
                 return;
             }
 
@@ -164,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void requestPermission() {
+    private void requestPermission(Callback runnable) {
+        this.runnable = runnable;
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_CODE);
     }
 
@@ -175,14 +189,20 @@ public class MainActivity extends AppCompatActivity {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0) {
                     boolean result = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if (result) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                            mRequest.getResources();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (runnable != null) {
+                            runnable.run(result);
                         }
                     }
                 }
         }
+        runnable = null;
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 
+    static interface Callback{
+        void run(boolean result);
+    }
 }
+
