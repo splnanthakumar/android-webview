@@ -1,8 +1,12 @@
 package com.activeapps.tamilchat4u;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,21 +17,30 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     private static final int FILECHOOSER_RESULTCODE = 1;
+    private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
     private static final String WEB_URL = "https://tamilchat4u.com/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
+    private ProgressDialog progressDialog;
+    private PermissionRequest mRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Loading...");
 
         mWebview = findViewById(R.id.webView);
 
@@ -37,12 +50,28 @@ public class MainActivity extends AppCompatActivity {
         mWebview.getSettings().setAllowContentAccess(true);
         mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        mWebview.getSettings().setSupportMultipleWindows(true);
+//        mWebview.getSettings().setSupportMultipleWindows(true);
+        mWebview.getSettings().setDomStorageEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            mWebview.getSettings().setMediaPlaybackRequiresUserGesture(false);
+        }
         mWebview.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return false;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                progressDialog.show();
+            }
+
+            @Override
+            public void onPageCommitVisible(WebView view, String url) {
+                super.onPageCommitVisible(view, url);
+                progressDialog.dismiss();
             }
         });
 
@@ -62,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 i.addCategory(Intent.CATEGORY_OPENABLE);
                 i.setType("*/*"); // set MIME type to filter
 
-                MainActivity.this.startActivityForResult(Intent.createChooser(i, "File Chooser"), MainActivity.FILECHOOSER_RESULTCODE );
+                MainActivity.this.startActivityForResult(Intent.createChooser(i, "File Chooser"), MainActivity.FILECHOOSER_RESULTCODE);
 
                 return true;
             }
@@ -76,8 +105,13 @@ public class MainActivity extends AppCompatActivity {
                     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void run() {
+                        mRequest = null;
                         if (request.getOrigin().toString().equals("https://tamilchat4u.com/")) {
-                            request.grant(request.getResources());
+                            if (checkPermission()) {
+                                request.grant(request.getResources());
+                            } else {
+                                requestPermission();
+                            }
                         } else {
                             request.deny();
                         }
@@ -98,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
 
@@ -123,4 +162,27 @@ public class MainActivity extends AppCompatActivity {
             mUploadMessage = null;
         }
     }
+
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_CODE);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+                    boolean result = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (result) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                            mRequest.getResources();
+                        }
+                    }
+                }
+        }
+    }
+
+
 }
