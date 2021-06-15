@@ -4,8 +4,8 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.activeapps.tamilchat4u",
-  "variantName": "processReleaseResources",
+  "applicationId": "com.activeapps.tamilheartchat",
+  "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",

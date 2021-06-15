@@ -11,26 +11,32 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+
+import com.bumptech.glide.Glide;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     private static final int FILECHOOSER_RESULTCODE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
-    private static final String WEB_URL = "https://tamilchat4u.com/";
+    private static final String WEB_URL = "https://tamilheartchat.com/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
-    private ProgressDialog progressDialog;
+    private GifImageView progressDialog;
+    private GifImageView gifImageView;
     private Callback runnable;
 
     @Override
@@ -38,9 +44,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+        progressDialog = findViewById(R.id.image);
+        progressDialog.setVisibility(View.VISIBLE);
 
-        progressDialog = new ProgressDialog(MainActivity.this);
-        progressDialog.setMessage("Loading...");
+//        progressDialog = new ProgressDialog(MainActivity.this);
+//        progressDialog.setMessage("Loading...");
+//        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//        progressDialog.setIndeterminate(true);
+//        progressDialog.show();
 
         mWebview = findViewById(R.id.webView);
 
@@ -65,19 +76,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                progressDialog.show();
+                progressDialog.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
-                progressDialog.dismiss();
+                progressDialog.setVisibility(View.GONE);
             }
         });
 
         activity = this;
         mWebview.setWebChromeClient(new WebChromeClient() {
-
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+            }
 
             @Override
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
@@ -106,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void run() {
-                        if (request.getOrigin().toString().equals("https://tamilchat4u.com/")) {
+                        if (request.getOrigin().toString().equals("https://tamilheartchat.com/")) {
                             if (checkPermission()) {
                                 request.grant(request.getResources());
                             } else {

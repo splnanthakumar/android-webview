@@ -4,10 +4,11 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/tamilchat"
+        android:icon="@mipmap/tamilheartchat"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/tamilchat"
+        android:roundIcon="@mipmap/tamilheartchat"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.DoorStepDelivery">
 
         <activity android:name=".MainActivity">
