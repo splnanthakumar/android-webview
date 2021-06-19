@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILECHOOSER_RESULTCODE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
-    private static final String WEB_URL = "https://tamilheartchat.com/";
+    private static final String WEB_URL = "https://hellotamilchat.com/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private GifImageView progressDialog;
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void run() {
-                        if (request.getOrigin().toString().equals("https://tamilheartchat.com/")) {
+                        if (request.getOrigin().toString().equals(WEB_URL)) {
                             if (checkPermission()) {
                                 request.grant(request.getResources());
                             } else {
