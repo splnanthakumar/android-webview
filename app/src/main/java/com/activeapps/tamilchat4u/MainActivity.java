@@ -3,7 +3,6 @@ package com.activeapps.tamilchat4u;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,9 +16,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
-
-import com.bumptech.glide.Glide;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILECHOOSER_RESULTCODE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
-    private static final String WEB_URL = "https://hellotamilchat.com/";
+    private static final String WEB_URL = "https://systemxchat.com/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private GifImageView progressDialog;
@@ -47,12 +43,6 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = findViewById(R.id.image);
         progressDialog.setVisibility(View.VISIBLE);
 
-//        progressDialog = new ProgressDialog(MainActivity.this);
-//        progressDialog.setMessage("Loading...");
-//        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//        progressDialog.setIndeterminate(true);
-//        progressDialog.show();
-
         mWebview = findViewById(R.id.webView);
 
         mWebview.getSettings().setJavaScriptEnabled(true);
@@ -61,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         mWebview.getSettings().setAllowContentAccess(true);
         mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-//        mWebview.getSettings().setSupportMultipleWindows(true);
         mWebview.getSettings().setDomStorageEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             mWebview.getSettings().setMediaPlaybackRequiresUserGesture(false);
@@ -127,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
                                 requestPermission(new Callback() {
                                     @Override
                                     public void run(boolean result) {
-                                        if(result){
+                                        if (result) {
                                             request.grant(request.getResources());
-                                        }else{
+                                        } else {
                                             request.deny();
                                         }
                                     }
@@ -170,8 +159,8 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == FILECHOOSER_RESULTCODE) {
 
-            if ( intent == null || resultCode != RESULT_OK) {
-                if (null != mUploadMessage){
+            if (intent == null || resultCode != RESULT_OK) {
+                if (null != mUploadMessage) {
                     mUploadMessage.onReceiveValue(null);
                     mUploadMessage = null;
                 }
@@ -215,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    static interface Callback{
+    static interface Callback {
         void run(boolean result);
     }
 }

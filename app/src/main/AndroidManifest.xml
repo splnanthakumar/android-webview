@@ -4,9 +4,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/hellotamilchat"
+        android:icon="@mipmap/systemxchat"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/hellotamilchat"
+        android:roundIcon="@mipmap/systemxchat"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.DoorStepDelivery">
