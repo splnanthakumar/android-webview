@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
     private static final String WEB_URL = "https://systemxchat.com/";
+    private static final String REQ_URL = "https://meet.jit.si/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private GifImageView progressDialog;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void run() {
-                        if (request.getOrigin().toString().equals(WEB_URL)) {
+                        if (request.getOrigin().toString().equals(WEB_URL) || request.getOrigin().toString().equals(REQ_URL)) {
                             if (checkPermission()) {
                                 request.grant(request.getResources());
                             } else {
@@ -147,8 +148,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED;
+        int audio = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
+        int camera = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
+        return audio == PackageManager.PERMISSION_GRANTED && camera == PackageManager.PERMISSION_GRANTED;
     }
 
 
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestPermission(Callback runnable) {
         this.runnable = runnable;
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE);
     }
 
 
