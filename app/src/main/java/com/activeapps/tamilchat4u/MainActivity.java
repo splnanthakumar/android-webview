@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.PermissionRequest;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -28,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILECHOOSER_RESULTCODE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
-    private static final String WEB_URL = "https://systemxchat.com/";
-    private static final String REQ_URL = "https://meet.jit.si/";
+    private static final String WEB_URL = "https://www.kurdlov.com/";
+    private static final String REQ_URL = "https://8x8.vc/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private GifImageView progressDialog;
@@ -59,8 +60,17 @@ public class MainActivity extends AppCompatActivity {
         mWebview.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return false;
+                if (url == null || url.startsWith("http://") || url.startsWith("https://")) {
+                    return false;
+                }
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    view.getContext().startActivity(intent);
+                    return true;
+                } catch (Exception e) {
+                    Log.i(TAG, "shouldOverrideUrlLoading Exception:" + e);
+                    return true;
+                }
             }
 
             @Override

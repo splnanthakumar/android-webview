@@ -4,9 +4,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/systemxchat"
+        android:icon="@mipmap/chatikurdi"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/systemxchat"
+        android:roundIcon="@mipmap/chatikurdi"
         android:supportsRtl="true"
         android:theme="@style/Theme.DoorStepDelivery"
         android:usesCleartextTraffic="true">
