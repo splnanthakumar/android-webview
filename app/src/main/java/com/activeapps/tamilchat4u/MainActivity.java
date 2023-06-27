@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILECHOOSER_RESULTCODE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
-    private static final String WEB_URL = "https://tamilchat4u.com/";
+    private static final String WEB_URL = "https://thamizhinichat.com/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private ProgressDialog progressDialog;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         mWebview.getSettings().setAllowFileAccess(true);
         mWebview.getSettings().setSaveFormData(true);
         mWebview.getSettings().setAllowContentAccess(true);
-        mWebview.getSettings().setAppCacheEnabled(true);
+//        mWebview.getSettings().setAppCacheEnabled(true);
         mWebview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 //        mWebview.getSettings().setSupportMultipleWindows(true);
         mWebview.getSettings().setDomStorageEnabled(true);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void run() {
-                        if (request.getOrigin().toString().equals("https://tamilchat4u.com/")) {
+                        if (request.getOrigin().toString().equals(WEB_URL)) {
                             if (checkPermission()) {
                                 request.grant(request.getResources());
                             } else {
