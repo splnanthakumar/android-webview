@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILECHOOSER_RESULTCODE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
-    private static final String WEB_URL = "https://teluguclubchat.com/";
+    private static final String WEB_URL = "https://gtamilchat.com/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private ProgressDialog progressDialog;
