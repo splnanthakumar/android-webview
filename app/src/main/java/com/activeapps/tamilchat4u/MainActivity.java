@@ -58,7 +58,23 @@ public class MainActivity extends AppCompatActivity {
         mWebview.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
+                if (url.startsWith("tel:")) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
+                    view.getContext().startActivity(intent);
+                    view.reload();
+                    return true;
+                } else if (url.startsWith("whatsapp://")) {
+                    Intent sendIntent = new Intent();
+                    String message = Uri.parse(url).getQueryParameter("text");
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+                    sendIntent.setType("text/plain");
+                    sendIntent.setPackage("com.whatsapp");
+                    startActivity(sendIntent);
+                    return true;
+                } else {
+                    view.loadUrl(url);
+                }
                 return false;
             }
 
@@ -113,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
                                 requestPermission(new Callback() {
                                     @Override
                                     public void run(boolean result) {
-                                        if(result){
+                                        if (result) {
                                             request.grant(request.getResources());
-                                        }else{
+                                        } else {
                                             request.deny();
                                         }
                                     }
@@ -156,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == FILECHOOSER_RESULTCODE) {
 
-            if ( intent == null || resultCode != RESULT_OK) {
-                if (null != mUploadMessage){
+            if (intent == null || resultCode != RESULT_OK) {
+                if (null != mUploadMessage) {
                     mUploadMessage.onReceiveValue(null);
                     mUploadMessage = null;
                 }
@@ -201,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    static interface Callback{
+    static interface Callback {
         void run(boolean result);
     }
 }
