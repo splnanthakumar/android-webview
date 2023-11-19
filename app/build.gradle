@@ -6,7 +6,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        applicationId "com.activeapps.vanakkamtamilchat"
+        applicationId "com.activeapps.friendlytamilchat"
         minSdkVersion 16
         targetSdkVersion 33
         versionCode 1
