@@ -6,7 +6,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        applicationId "com.activeapps.friendlytamilchat"
+        applicationId "com.activeapps.tulipschat"
         minSdkVersion 16
         targetSdkVersion 33
         versionCode 1
