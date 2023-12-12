@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -22,12 +23,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     private static final int FILECHOOSER_RESULTCODE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private WebView mWebview;
-    private static final String WEB_URL = "https://worldtamilchat.in/";
+    private static final String WEB_URL = "https://mazuma.in/";
     private Activity activity = null;
     private ValueCallback<Uri[]> mUploadMessage;
     private ProgressDialog progressDialog;
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         mWebview.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                String message = Uri.parse(url).getQueryParameter("text");
                 if (url.startsWith("tel:")) {
                     Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
                     view.getContext().startActivity(intent);
@@ -65,14 +69,50 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else if (url.startsWith("whatsapp://")) {
                     Intent sendIntent = new Intent();
-                    String message = Uri.parse(url).getQueryParameter("text");
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TEXT, message);
                     sendIntent.setType("text/plain");
                     sendIntent.setPackage("com.whatsapp");
                     startActivity(sendIntent);
                     return true;
-                } else {
+                } else if (url.startsWith("https://www.linkedin.com/")){
+                    message = Uri.parse(url).getQueryParameter("title");
+
+                    Intent linkedinIntent = new Intent(Intent.ACTION_SEND);
+                    linkedinIntent.setType("text/plain");
+                    linkedinIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+                    boolean linkedinAppFound = false;
+                    List<ResolveInfo> matches2 = getPackageManager()
+                            .queryIntentActivities(linkedinIntent, 0);
+
+                    for (ResolveInfo info : matches2) {
+                       String packagename =  info.activityInfo.packageName.toLowerCase();
+                       Log.d("packagenames ", packagename);
+                        if (packagename.startsWith(
+                                "com.linkedin")) {
+                            linkedinIntent.setPackage(info.activityInfo.packageName);
+                            linkedinAppFound = true;
+                            break;
+                        }
+                    }
+
+                    if (linkedinAppFound) {
+                        startActivity(linkedinIntent);
+                        return true;
+                    }else{
+                        // start share content by default open all supported apps
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+                        sendIntent.setType("text/plain");
+
+                        Intent shareIntent = Intent.createChooser(sendIntent, null);
+                        startActivity(shareIntent);
+                        return true;
+                    }
+
+                }else {
                     view.loadUrl(url);
                 }
                 return false;
